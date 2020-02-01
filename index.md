@@ -1,0 +1,5 @@
+# Hyper Blog
+
+---
+
+### これはHyperなBlogです。
