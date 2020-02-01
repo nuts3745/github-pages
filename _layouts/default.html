@@ -17,13 +17,6 @@
   <div class="wrapper">
     <header>
       <h1><a href="{{ "/" | absolute_url }}">{{ site.title }}</a></h1>
-
-      {% if site.logo %}
-      <img src="{{site.logo | relative_url}}" alt="Logo" />
-      {% endif %}
-
-      <p>{{ site.description | default: site.github.project_tagline }}</p>
-
     </header>
     <section>
 
