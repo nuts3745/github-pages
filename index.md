@@ -1,7 +1,0 @@
-<div class="github-link">
-  <i class="fab fa-github-square"></i>
-  <a href="https://github.com/nuts3745" target="_blank">nuts3745</a>
-</div>
-<a href="https://github.com/nuts3745" target="_blank">
-  <img src="https://grass-graph.moshimo.works/images/nuts3745.png?rotate=90">
-</a>
