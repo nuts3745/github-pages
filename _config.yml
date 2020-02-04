@@ -1,2 +1,2 @@
 theme: minima
-permalink: /:categories/:year/:month/:day/:title:output_ext
+permalink: /:categories/:year/:month/:day/:title/
