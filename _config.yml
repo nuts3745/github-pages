@@ -1,2 +1,3 @@
 theme: minima
-permalink: /:categories/:year/:month/:day/:title/
+permalink: /n:categories/:year/:month/:day/:title/
+markdown: GFM
