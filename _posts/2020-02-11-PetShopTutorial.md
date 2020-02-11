@@ -209,3 +209,39 @@ contract TestAdoption {
 ### テストしよう
 - terminalで`truffle test`を実行する。
 - クリアできたら、3つのチェックマークが表示される。
+
+### スマートコントラクトにアクセスするためのUIを作成しよう
+- 既に`src/`ディレクトリに用意してあるので、それを見ていく。
+
+## web3をインスタンス化しよう
+
+- `src/app.js`を開いて、`initWeb3`の箇所に書き加えていく。
+  - インサートブロックは消す。
+
+```js=
+// Modern dapp browsers...
+    if (window.ethereum) {
+      App.web3Provider = window.ethereum;
+      try {
+        // Request account access
+        await window.ethereum.enable();
+      } catch (error) {
+        console.error("User denied account access")
+      }
+    }
+// Legacy dapp browsers...
+    else if (window.web3) {
+      App.web3Provider = window.web3.currentProvider;
+    }
+// If no injected web3 instance is detected, fall back to Ganache
+    else {
+      App.web3Provider = new Web3.providers.HttpProvider('http://localhost:7545');
+    }
+    web3 = new Web3(App.web3Provider);
+```
+
+- まず、新しいブラウザや、`Metamask`などを導入しているブラウザかどうかを判別して、web3オブジェクトを作成する。アカウントへアクセスできなかった場合、エラーを返す処理も入れておく。
+- `ethereum`が見つからなかった場合や、古いdappブラウザを使用している場合（旧バージョンのMetamaskなど）は使用しているweb3Providerを呼び出してオブジェクトを作成する。
+- ブラウザにweb3インスタンスが見つからない場合は、`Ganache`などのローカルのプロバイダーに基づいて作成するが、安全ではないので実稼働には適していない。
+
+### コントラクトのインスタンス化
