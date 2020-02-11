@@ -120,3 +120,92 @@ contract Adoption {
 
 ### マイグレートしよう
 無事コンパイルできたら、それらをブロックチェーンにマイグレートする。
+
+- `1_initial_migration.js`ファイルが既に`migrations/`にあるが、`Migration.sol`を利用するｔことで、以降変更されていないスマートコントラクトを重複してデプロイすることがないようになっている。
+
+- `2_deploy_contracts.js`ファイルを`migrations/`に新規作成し、以下の内容を書き込む。
+
+```solidity=
+var Adoption = artifacts.require("Adoption");
+
+module.exports = function (deployer) {
+  deployer.deploy(Adoption);
+};
+```
+
+- 今回は、`Ganache`を利用してローカルブロックチェーンを立ち上げて、そこにデプロイしていく。
+- `Ganache`をダウンロードして起動したら、クイックスタートを選択し、ローカルブロックチェーンを立ち上げる。
+- terminalに戻り、`truffle migrate`を実行する。
+
+- 成功した場合、`Ganache`のブロック数`0`から`4`に増えており、一番上のイーサリアムアカウントも`100ETH`から手数料が引かれているのがわかる。
+
+- これで、スマートコントラクトの作成からローカルブロックチェーンへのデプロイまでが完了した。次はスマートコントラクトにアクセスして操作してみよう。
+
+### スマートコントラクトをテストしよう
+
+- `test/`に`TestAdoption.sol`を新規作成し、以下の内容を追加する。
+
+```solidity=
+pragma solidity >=0.4.22 <0.6.2;
+
+import "truffle/Assert.sol";
+import "truffle/DeployedAddresses.sol";
+import "../contracts/Adoption.sol";
+
+contract TestAdoption {
+  // The address of the adoption contract to be tested
+  Adoption adoption = Adoption(DeployedAddresses.Adoption());
+
+  //The id of the pet that will be used for testing
+  uint expectedPetId = 8;
+
+  //The expected owner of adopted pet is this contract
+  address expectedAdopter = address(this);
+  
+}
+```
+
+- `Assert.sol`はテストで使用するTruffleのライブラリ
+- `DeployedAddresses.sol`はテスト用にデプロイするスマートコントラクトのアドレスを取得するTruffleのライブラリ
+- `Adoption.sol`はテストしたいスマートコントラクト
+- テスト用に想定される変数を用意している。
+
+### adopt()関数をテストしよう
+
+```solidity=
+// Testing the adopt() function
+  function testUserCanAdoptPet() public {
+    uint returnedId = adoption.adopt(expectedPetId);
+    
+    Assert.equal(returnedId, expectedPetId, "Adoption of the expected pet should match what is returned.");
+  }
+  ```
+- `adopt()`は`petId`を返すので、返された`returnedPetId`と`expectedPetId`とがイコールになるかを判定しています。
+  - テストにクリアできなかった場合、与えられた文章が表示されます。
+
+### ペットの飼い主が合っているかテストしよう
+```solidity=
+// Testing retrieval of a single pet's owner
+  function testGetAdopterAddressByPetId() public {
+    address adopter = adoption.adopters(expectedPetId);
+
+    Assert.equal(adopter, expectedAdopter,"Owner of the expected pet should be this contract");
+  }
+```
+
+- `adopters`配列の中から`expectedPetId`の飼い主を得て、`expectedAdopter`とイコールになるかをテストします。
+
+### 全てのペットの飼い主が合っているかテストしよう
+```solidity=
+  // Testing retrieval of all pet owners
+  function testGetAdopterAddressByPetIdInArray() public {
+    // Store adopters in memory rather than contract's storage
+    address[16] memory adopters = adoption.getAdopters();
+
+    Assert.equal(adopters[expectedPetId], expectedAdopter, "Owner of the expected pet should be this contract");
+  }
+```
+
+### テストしよう
+- terminalで`truffle test`を実行する。
+- クリアできたら、3つのチェックマークが表示される。
