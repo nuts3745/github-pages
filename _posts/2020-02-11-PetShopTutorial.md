@@ -216,24 +216,24 @@ contract TestAdoption {
 ## web3をインスタンス化しよう
 
 - `src/app.js`を開いて、`initWeb3`の箇所に書き加えていく。
-  - インサートブロックは消す。
+  - コメントブロックは消す。
 
 ```js=
-// Modern dapp browsers...
+    //Modern dapp browsers...
     if (window.ethereum) {
       App.web3Provider = window.ethereum;
       try {
-        // Request account access
+        //Request account access
         await window.ethereum.enable();
       } catch (error) {
         console.error("User denied account access")
       }
     }
-// Legacy dapp browsers...
+    //Legacy dapp browsers...
     else if (window.web3) {
       App.web3Provider = window.web3.currentProvider;
     }
-// If no injected web3 instance is detected, fall back to Ganache
+    //If no injected web3 instance is detected, fall back to Ganache
     else {
       App.web3Provider = new Web3.providers.HttpProvider('http://localhost:7545');
     }
@@ -242,6 +242,24 @@ contract TestAdoption {
 
 - まず、新しいブラウザや、`Metamask`などを導入しているブラウザかどうかを判別して、web3オブジェクトを作成する。アカウントへアクセスできなかった場合、エラーを返す処理も入れておく。
 - `ethereum`が見つからなかった場合や、古いdappブラウザを使用している場合（旧バージョンのMetamaskなど）は使用しているweb3Providerを呼び出してオブジェクトを作成する。
-- ブラウザにweb3インスタンスが見つからない場合は、`Ganache`などのローカルのプロバイダーに基づいて作成するが、安全ではないので実稼働には適していない。
+- ブラウザにweb3インスタンスが見つからない場合は、`Ganache`などのローカルのプロバイダーに基づいて作成するが、安全ではないので実運用には適していない。
 
 ### コントラクトのインスタンス化
+```js=
+$.getJSON('Adoption.json', function (data) {
+      // Get the necessary contract artifact file and instantiate it with truffle-contract
+      var AdoptionArtifact = data;
+      App.contracts.Adoption = TruffleContract(AdoptionArtifact);
+
+      //Set the provider for our contract
+      App.contracts.Adoption.setProvider(App.web3Provider);
+
+      //Use our contract to retrieve and mark the adopted pets
+      return App.markAdopted();
+    });
+```
+
+- まずスマートコントラクトのアーティファクトを取得する。
+  - デプロイされたアドレスやABIなど、コントラクトに関する情報がアーティファクト。
+- `TruffleContract()`にそれらの情報を渡す。
+- 先に作成したweb3オブジェクトをプロバイダーにセットする。
