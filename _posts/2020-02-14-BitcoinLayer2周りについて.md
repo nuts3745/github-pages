@@ -38,4 +38,4 @@ DigitalGarage関連のジョイントベンチャーでBitcoinに注力してい
 - 現実の信頼性を表現するoracleを利用しているのが特徴。
 - 仕組みはLightning Networkに似ている。
 - セキュリティがとても強固であるBitcoinで金融商品を提供できるのが強み。
-- OSSも始めた。
+- [OSS](https://github.com/discreetlogcontracts/dlcspecs/)も始めた。
