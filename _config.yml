@@ -1,3 +1,5 @@
 theme: minima
 permalink: /:categories/:year/:month/:day/:title/
 markdown: GFM
+gems:
+  - jekyll-feed
